@@ -17,6 +17,11 @@ RETURNING *;
 -- name: UpdateAuthor :exec
 UPDATE authors
   set name = $2, bio = $3
+WHERE id = $1;
+
+-- name: UpdateAuthorAndReturn :one
+UPDATE authors
+  set name = $2, bio = $3
 WHERE id = $1
 RETURNING *;
 
