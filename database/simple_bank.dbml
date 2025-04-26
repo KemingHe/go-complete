@@ -14,7 +14,7 @@ Table account as A {
 
 Table entries {
   id bigserial [pk]
-  account_id bigint [ref: > A.id] // One (account) to many (entries)
+  account_id bigint [not null, ref: > A.id]
   amount bigint [not null, note: 'can be positive or negative']
   created_at timestamptz [not null, default: `now()`]
 
@@ -25,8 +25,8 @@ Table entries {
 
 Table transfers {
   id bigserial [pk]
-  from_account_id bigint [ref: > A.id] // One (pair of sender-receiver) to many (transfers)
-  to_account_id bigint [ref: > A.id]
+  from_account_id bigint [not null, ref: > A.id]
+  to_account_id bigint [not null, ref: > A.id]
   amount bigint [not null, note: 'can only be positive']
   created_at timestamptz [not null, default: `now()`]
 
