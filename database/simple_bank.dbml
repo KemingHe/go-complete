@@ -1,0 +1,38 @@
+// Platform-agnostic DB schema for a simple bank, records including: accounts,
+// account entries, and transfers between two accounts
+Table account as A {
+  id bigserial [pk]
+  owner varchar [not null]
+  balance bigint [not null]
+  currentcy varchar [not null]
+  created_at timestamptz [not null, default: `now()`]
+
+  Indexes { // Optimize search by owner
+    owner
+  }
+}
+
+Table entries {
+  id bigserial [pk]
+  account_id bigint [ref: > A.id] // One (account) to many (entries)
+  amount bigint [not null, note: 'can be positive or negative']
+  created_at timestamptz [not null, default: `now()`]
+
+  Indexes { // Optimize search by account ID
+    account_id
+  }
+}
+
+Table transfers {
+  id bigserial [pk]
+  from_account_id bigint [ref: > A.id] // One (pair of sender-receiver) to many (transfers)
+  to_account_id bigint [ref: > A.id]
+  amount bigint [not null, note: 'can only be positive']
+  created_at timestamptz [not null, default: `now()`]
+
+  Indexes { // Optimize search by sender, receiver, and both
+    from_account_id 
+    to_account_id
+    (from_account_id, to_account_id)
+  }
+}
